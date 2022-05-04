@@ -1,0 +1,175 @@
+" Comment the following line if you don't want Vim and NeoVim to share the
+" same plugin download directory.
+let g:spacevim_plug_home = '~/.vim/plugged'
+
+" Uncomment the following line to override the leader key. The default value is space key "<\Space>".
+" let g:spacevim_leader = "<\Space>"
+
+" Uncomment the following line to override the local leader key. The default value is comma ','.
+" let g:spacevim_localleader = ','
+
+" Enable the existing layers in space-vim.
+" Refer to https://github.com/liuchengxu/space-vim/blob/master/layers/LAYERS.md for all available layers.
+let g:spacevim_layers = [
+      \ 'fzf', 'better-defaults', 'which-key',
+      \ ]
+
+" Uncomment the following line if your terminal(-emulator) supports true colors.
+" let g:spacevim_enable_true_color = 1
+
+" Uncomment the following if you have some nerd font installed.
+" let g:spacevim_nerd_fonts = 1
+
+" If you want to have more control over the layer, try using Layer command.
+" if g:spacevim.gui
+"   Layer 'airline'
+" endif
+
+" Manage your own plugins.
+" Refer to https://github.com/junegunn/vim-plug for more detials.
+function! UserInit()
+
+  " Add your own plugin via Plug command.
+  Plug 'junegunn/seoul256.vim'
+  Plug 'jiangmiao/auto-pairs'
+  Plug 'luochen1990/rainbow'
+  Plug 'ycm-core/YouCompleteMe'
+  Plug 'Yggdroot/indentLine'
+  Plug 'preservim/nerdtree'
+  Plug 'Xuyuanp/nerdtree-git-plugin'
+  Plug 'ryanoasis/vim-devicons'
+  Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+  Plug 'puremourning/vimspector', {'do': './install_gadget.py --enable-rust	--enable-go --enable-bash --enable-python'}
+endfunction
+
+
+" 彩虹括号
+let g:rainbow_active = 1
+
+" 剪切板
+set clipboard=unnamedplus
+
+" 对齐线
+let g:indentLine_color_term = 239
+
+" NERD tree
+let NERDChristmasTree=0
+let NERDTreeWinSize=35
+let NERDTreeChDirMode=2
+let NERDTreeIgnore=['\~$']
+let NERDTreeShowBookmarks=1
+let NERDTreeShowHidden=1
+let NERDTreeWinPos="left"
+" Automatically open a NERDTree if no files where specified
+" autocmd vimenter * if !argc() | NERDTree | endif
+" Close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Open a NERDTree
+nmap <F3> :NERDTreeToggle<cr>
+
+" git 
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+let g:NERDTreeGitStatusShowIgnored = 1
+let g:NERDTreeGitStatusConcealBrackets = 1
+
+"  '߷'
+
+"gvim字体
+set guifont=Fira\ Code\ 15
+set guiligatures=!\"#$%&()*+-./:<=>?@[]^_{\|~
+set cursorcolumn
+set ambiwidth=double
+command Wq wq
+command WQ wq
+command W w
+
+" 方向键改为调整窗口大小
+imap <Left> <C-w>>
+imap <Right> <C-w><
+imap <Up> <C-w>+
+imap <Down> <C-w>-
+map <Left> <C-w>>
+map <Right> <C-w><
+map <Up> <C-w>+
+map <Down> <C-w>-
+
+" 光标
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+
+"宏
+abbr sct std::cout
+abbr sel std::endl
+
+"YouCompleteMe
+"自动开启语义补全
+let g:ycm_seed_identifiers_with_syntax = 1
+"在注释中也开启补全
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 0
+"字符串中也开启补全
+let g:ycm_complete_in_strings = 1
+let g:ycm_collect_identifiers_from_tags_files = 1
+"开启基于tag的补全，可以在这之后添加需要的标签路径
+let g:ycm_collect_identifiers_from_tags_files = 1
+"开始补全的字符数
+let g:ycm_min_num_of_chars_for_completion = 2
+let g:ycm_global_ycm_extra_conf = '$HOME/.vim/plugged/YouCompleteMe/.ycm_extra_conf.py'
+"补全后自动关闭预览窗口
+let g:ycm_autoclose_preview_window_after_completion = 1
+"禁止缓存匹配项,每次都重新生成匹配项
+let g:ycm_cache_omnifunc=0
+"离开插入模式后自动关闭预览窗口
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+"语法关键字补全
+let g:ycm_seed_identifiers_with_syntax = 1
+"在实现和声明之间跳转,并分屏打开
+let g:ycm_goto_buffer_command = 'horizontal-split'
+let g:ycm_clangd_binary_path = '/usr/bin/clangd'
+let g:ycm_goto_buffer_command = 'rightbelow'
+nmap <F4> :YcmCompleter GoTo<cr>
+
+" vimspcctor
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
+function! s:read_template_into_buffer(template)
+    " has to be a function to avoid the extra space fzf#run insers otherwise
+    execute '0r ~/.vim/.vimspectorjson/'.a:template
+endfunction
+command! -bang -nargs=* LoadVimSpectorJsonTemplate call fzf#run({
+            \   'source': 'ls -1 ~/.vim/.vimspectorjson',
+            \   'down': 20,
+            \   'sink': function('<sid>read_template_into_buffer')
+            \ })
+noremap <leader>db :tabe .vimspector.json<CR>:LoadVimSpectorJsonTemplate<CR>
+"sign define vimspectorBP text=☛ texthl=Normal
+"sign define vimspectorBPDisabled text=☞ texthl=Normal
+"sign define vimspectorPC text=¶ texthl=SpellBad
+
+
+
+
+" Override the default settings from space-vim as well as adding extras
+function! UserConfig()
+
+  " Override the default settings.
+  " Uncomment the following line to disable relative number.
+  " set norelativenumber
+
+  " Adding extras.
+  " Uncomment the following line If you have installed the powerline fonts.
+  " It is good for airline layer.
+  " let g:airline_powerline_fonts = 1
+
+endfunction
